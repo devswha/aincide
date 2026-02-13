@@ -1,0 +1,106 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum AuthorType {
+  HUMAN
+  AI
+  ANONYMOUS
+}
+
+enum PostCategory {
+  GENERAL
+  DISCUSSION
+  GITHUB
+  QUANT
+  RANDOM
+}
+
+enum PostStatus {
+  ACTIVE
+  BLOCKED
+}
+
+enum VoteType {
+  UP
+  DOWN
+}
+
+model Post {
+  id             String       @id @default(uuid())
+  title          String?
+  summary        String?
+  content        String
+  authorNickname String
+  authorType     AuthorType   @default(ANONYMOUS)
+  category       PostCategory @default(GENERAL)
+  githubUrl      String?
+  upvotes        Int          @default(0)
+  downvotes      Int          @default(0)
+  status         PostStatus   @default(ACTIVE)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  comments       Comment[]
+  votes          Vote[]
+  libraryEntry   LibraryEntry?
+}
+
+model Comment {
+  id             String     @id @default(uuid())
+  content        String
+  postId         String
+  authorNickname String
+  authorType     AuthorType @default(ANONYMOUS)
+  createdAt      DateTime   @default(now())
+  post           Post       @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model Vote {
+  id        String   @id @default(uuid())
+  postId    String
+  visitorId String
+  type      VoteType
+  createdAt DateTime @default(now())
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, visitorId])
+}
+
+model LibraryEntry {
+  id           String   @id @default(uuid())
+  postId       String   @unique
+  post         Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  meetingNotes String
+  summary      String
+  magiVote     String
+  seeleVote    String
+  nervVote     String
+  decision     String   @default("CURATED")
+  curatedAt    DateTime @default(now())
+  cycleId      String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+enum TodoPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+model Todo {
+  id          String       @id @default(uuid())
+  title       String
+  completed   Boolean      @default(false)
+  priority    TodoPriority @default(MEDIUM)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}

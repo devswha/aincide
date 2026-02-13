@@ -1,0 +1,157 @@
+AINCIDE PROJECT STRUCTURE
+========================
+
+aincide/
+├── Configuration Files
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── tsconfig.json
+│   ├── tsconfig.tsbuildinfo
+│   ├── next.config.ts
+│   ├── next-env.d.ts
+│   ├── eslint.config.mjs
+│   ├── postcss.config.mjs
+│   ├── prisma.config.ts
+│   ├── vercel.json
+│   ├── .env.example
+│   ├── .gitignore
+│   ├── README.md
+│   └── AGENTS.md
+
+├── Public Assets (public/)
+│   ├── favicon.ico
+│   ├── file.svg
+│   ├── globe.svg
+│   ├── next.svg
+│   ├── vercel.svg
+│   └── window.svg
+
+├── Database (prisma/)
+│   ├── schema.prisma
+│   ├── prisma.config.ts
+│   ├── dev.db
+│   ├── AGENTS.md
+│   └── migrations/
+│       ├── 20260203123440_init/
+│       │   └── migration.sql
+│       └── migration_lock.toml
+
+├── Source Code (src/)
+│   ├── AGENTS.md
+│   │
+│   ├── app/ (Next.js App Router)
+│   │   ├── AGENTS.md
+│   │   ├── layout.tsx
+│   │   ├── page.tsx (Home page)
+│   │   ├── error.tsx
+│   │   ├── loading.tsx
+│   │   ├── not-found.tsx
+│   │   ├── favicon.ico
+│   │   ├── globals.css
+│   │   │
+│   │   ├── api/ (API Routes)
+│   │   │   ├── AGENTS.md
+│   │   │   └── posts/
+│   │   │       ├── AGENTS.md
+│   │   │       ├── route.ts (POST /api/posts)
+│   │   │       └── [id]/
+│   │   │           ├── route.ts (GET /api/posts/[id])
+│   │   │           ├── vote/
+│   │   │           │   └── route.ts (POST /api/posts/[id]/vote)
+│   │   │           └── comments/
+│   │   │               └── route.ts (GET /api/posts/[id]/comments)
+│   │   │
+│   │   └── posts/ (Page Routes)
+│   │       ├── AGENTS.md
+│   │       ├── [id]/
+│   │       │   └── page.tsx (Post detail page)
+│   │       └── new/
+│   │           └── page.tsx (Create post page)
+│   │
+│   ├── components/ (React Components)
+│   │   ├── AGENTS.md
+│   │   ├── Header.tsx
+│   │   ├── PostCard.tsx
+│   │   ├── PostList.tsx
+│   │   ├── PostForm.tsx
+│   │   ├── CommentForm.tsx
+│   │   ├── CommentList.tsx
+│   │   ├── VoteButtons.tsx
+│   │   └── skeletons/
+│   │       ├── AGENTS.md
+│   │       └── PostCardSkeleton.tsx
+│   │
+│   ├── lib/ (Utilities)
+│   │   ├── AGENTS.md
+│   │   ├── prisma.ts (Prisma client singleton)
+│   │   └── utils.ts
+│   │
+│   └── generated/ (Auto-generated)
+│       └── prisma/ (Prisma Client generated files)
+│           ├── client.d.ts
+│           ├── client.js
+│           ├── index.d.ts
+│           ├── index.js
+│           ├── default.d.ts
+│           ├── default.js
+│           ├── edge.d.ts
+│           ├── edge.js
+│           ├── index-browser.js
+│           ├── package.json
+│           ├── schema.prisma
+│           ├── query_compiler_fast_bg.js
+│           ├── query_compiler_fast_bg.wasm
+│           ├── query_compiler_fast_bg.wasm-base64.js
+│           ├── wasm-edge-light-loader.mjs
+│           ├── wasm-worker-loader.mjs
+│           └── runtime/
+│               ├── client.d.ts
+│               ├── client.js
+│               ├── index-browser.d.ts
+│               ├── index-browser.js
+│               ├── wasm-compiler-edge.js
+
+└── Project Metadata (.omc/)
+    └── state/
+        └── subagent-tracking.json
+
+KEY FILES SUMMARY
+=================
+
+Core API Routes:
+  • /src/app/api/posts/route.ts - List/create posts
+  • /src/app/api/posts/[id]/route.ts - Get/update/delete specific post
+  • /src/app/api/posts/[id]/vote/route.ts - Vote on posts
+  • /src/app/api/posts/[id]/comments/route.ts - Get/add comments
+
+Page Routes:
+  • /src/app/page.tsx - Landing/home page
+  • /src/app/posts/[id]/page.tsx - Post detail view
+  • /src/app/posts/new/page.tsx - Create new post
+
+Components:
+  • Header.tsx - Navigation header
+  • PostCard.tsx - Individual post display
+  • PostList.tsx - List of posts
+  • PostForm.tsx - Create/edit post form
+  • CommentForm.tsx - Comment input
+  • CommentList.tsx - Display comments
+  • VoteButtons.tsx - Voting UI
+  • PostCardSkeleton.tsx - Loading skeleton
+
+Database:
+  • /prisma/schema.prisma - Data model
+  • /prisma/migrations/ - Migration history
+
+Utilities:
+  • /src/lib/prisma.ts - Database client
+  • /src/lib/utils.ts - Helper functions
+
+FEATURE SCOPE
+=============
+✓ Posts (create, read, list, delete)
+✓ Comments (add, display)
+✓ Voting system (upvote/downvote)
+✓ Loading states (skeletons)
+✓ Error handling
+✓ Database persistence (SQLite via Prisma)
