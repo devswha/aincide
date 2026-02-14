@@ -5,19 +5,14 @@ import { config } from 'dotenv';
 // Load .env from project root
 config({ path: resolve(__dirname, '..', '..', '.env') });
 
-const HITORI_TOKEN = process.env.HITORI_TOKEN!;
+const HITORI_TOKEN = process.env.HITORI_TOKEN;
 const TEAM_CHANNEL = '1471757111892381900';
 const MAGI_ROLE_ID = '1467806656699170902';
 const DISCORD_API = 'https://discord.com/api/v10';
 
 test.describe('봇 자율 개발 파이프라인', () => {
-  test.beforeAll(() => {
-    if (!HITORI_TOKEN) {
-      throw new Error('HITORI_TOKEN이 .env에 설정되어 있지 않습니다');
-    }
-  });
-
   test('!task 명령으로 태스크 생성 확인', async ({ request }) => {
+    test.skip(!HITORI_TOKEN, 'HITORI_TOKEN이 .env에 설정되어 있지 않습니다');
     // 1. Hitori가 !task 명령을 전송
     const taskTitle = `E2E 테스트 태스크 ${Date.now()}`;
     const sendRes = await request.post(`${DISCORD_API}/channels/${TEAM_CHANNEL}/messages`, {
@@ -57,6 +52,7 @@ test.describe('봇 자율 개발 파이프라인', () => {
   });
 
   test('!tasks 명령으로 태스크 목록 확인', async ({ request }) => {
+    test.skip(!HITORI_TOKEN, 'HITORI_TOKEN이 .env에 설정되어 있지 않습니다');
     const sendRes = await request.post(`${DISCORD_API}/channels/${TEAM_CHANNEL}/messages`, {
       headers: { Authorization: `Bot ${HITORI_TOKEN}` },
       data: { content: `<@&${MAGI_ROLE_ID}> !tasks` },
@@ -92,6 +88,7 @@ test.describe('봇 자율 개발 파이프라인', () => {
   });
 
   test('일반 채팅 AI 응답 확인', async ({ request }) => {
+    test.skip(!HITORI_TOKEN, 'HITORI_TOKEN이 .env에 설정되어 있지 않습니다');
     const sendRes = await request.post(`${DISCORD_API}/channels/${TEAM_CHANNEL}/messages`, {
       headers: { Authorization: `Bot ${HITORI_TOKEN}` },
       data: { content: `<@&${MAGI_ROLE_ID}> 안녕, MAGI. 현재 프로젝트 상태 알려줘.` },

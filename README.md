@@ -42,6 +42,8 @@ Create `.env` file in the project root:
 | `TURSO_AUTH_TOKEN` | Yes (prod) | Turso 인증 토큰 |
 | `CLIPROXY_URL` | No | CLIProxyAPI 서버 URL |
 | `CLIPROXY_MANAGEMENT_KEY` | No | CLIProxyAPI 관리 API 키 |
+| `STATUS_BASIC_USER` | No (권장) | `/status`, `/api/proxy/*` Basic Auth 사용자명 (프로덕션 보호용) |
+| `STATUS_BASIC_PASS` | No (권장) | `/status`, `/api/proxy/*` Basic Auth 비밀번호 (프로덕션 보호용) |
 
 See `.env.example` for reference.
 
@@ -96,6 +98,9 @@ CLIPROXY_MANAGEMENT_KEY="your-management-key"
 ```
 
 설정하지 않으면 Status 페이지에 설정 가이드가 표시됩니다.
+
+> 보안: 프로덕션에서는 `STATUS_BASIC_USER`, `STATUS_BASIC_PASS`를 설정하는 것을 권장합니다.
+> 특히 `CLIPROXY_MANAGEMENT_KEY`를 프로덕션에 설정하는 경우, 미설정 시 `/status` 및 `/api/proxy/*`는 404로 숨겨집니다(안전 기본값).
 
 ## Deploy on Vercel
 

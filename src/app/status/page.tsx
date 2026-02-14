@@ -178,9 +178,12 @@ function BotRow({ bot }: { bot: BotInfo }) {
 export default function StatusPage() {
   const [botStatus, setBotStatus] = useState<BotStatusData | null>(null)
   const [usageData, setUsageData] = useState<UsageData | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [botLoading, setBotLoading] = useState(true)
+  const [usageLoading, setUsageLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [botError, setBotError] = useState<string | null>(null)
+  const [usageError, setUsageError] = useState<string | null>(null)
+  const [usageNotConfigured, setUsageNotConfigured] = useState(false)
   const [services, setServices] = useState<ServiceHealth[]>([
     { name: 'Quant Dashboard', url: '', status: 'checking', description: 'magi-quant 트레이딩 대시보드' },
     { name: 'Stock Dashboard', url: '', status: 'checking', description: 'magi-stock 주식 대시보드' },
@@ -199,31 +202,85 @@ export default function StatusPage() {
   }, [])
 
   const fetchAll = useCallback(async () => {
-    try {
-      setError(null)
-      const [statusResult, usageResult] = await Promise.allSettled([
-        fetch('/api/proxy/bot-status').then(r => {
-          if (!r.ok) throw new Error('Failed')
-          return r.json()
-        }),
-        fetch('/api/proxy/bot-usage').then(r => {
-          if (!r.ok) throw new Error('Failed')
-          return r.json()
-        }),
-      ])
-      if (statusResult.status === 'fulfilled') setBotStatus(statusResult.value)
-      if (usageResult.status === 'fulfilled') setUsageData(usageResult.value)
-      if (statusResult.status === 'rejected' && usageResult.status === 'rejected') {
-        setError('봇 서버에 연결할 수 없습니다. Tailscale 연결을 확인하세요.')
-      }
-    } catch (err) {
-      console.error('Failed to fetch data:', err)
-      setError('봇 서버에 연결할 수 없습니다. Tailscale 연결을 확인하세요.')
-    } finally {
-      setLoading(false)
-      setRefreshing(false)
-    }
+    setBotError(null)
+    setUsageError(null)
+    setUsageNotConfigured(false)
+    setBotLoading(true)
+    setUsageLoading(true)
+
+    // Refresh dashboards in parallel; don't block UI on long-running checks.
     checkServices()
+
+    const fetchBotStatus = async (): Promise<BotStatusData> => {
+      const response = await fetch('/api/proxy/bot-status')
+      if (!response.ok) throw new Error(`bot-status:${response.status}`)
+      const data = await response.json()
+      return {
+        bots: Array.isArray(data?.bots) ? data.bots : [],
+        serverUptime: typeof data?.serverUptime === 'string' ? data.serverUptime : '',
+      }
+    }
+
+    const fetchUsage = async (): Promise<
+      | { kind: 'ok'; data: UsageData }
+      | { kind: 'not_configured' }
+    > => {
+      const response = await fetch('/api/proxy/usage')
+
+      let data: { error?: string; accounts?: unknown; codex?: unknown } | null = null
+      try {
+        data = (await response.json()) as { error?: string; accounts?: unknown; codex?: unknown }
+      } catch {
+        data = null
+      }
+
+      if (response.status === 503 && data?.error === 'CLIProxyAPI not configured') {
+        return { kind: 'not_configured' }
+      }
+
+      if (!response.ok) {
+        throw new Error(data?.error || `usage:${response.status}`)
+      }
+
+      return {
+        kind: 'ok',
+        data: {
+          accounts: Array.isArray(data?.accounts) ? (data.accounts as AccountUsage[]) : [],
+          codex: Array.isArray(data?.codex) ? (data.codex as CodexUsage[]) : [],
+        },
+      }
+    }
+
+    const botTask = (async () => {
+      try {
+        setBotStatus(await fetchBotStatus())
+      } catch {
+        setBotStatus(null)
+        setBotError('봇 상태를 가져올 수 없습니다. (USAGE_SERVER_URL 또는 네트워크 상태 확인)')
+      } finally {
+        setBotLoading(false)
+      }
+    })()
+
+    const usageTask = (async () => {
+      try {
+        const result = await fetchUsage()
+        if (result.kind === 'not_configured') {
+          setUsageData(null)
+          setUsageNotConfigured(true)
+        } else {
+          setUsageData(result.data)
+        }
+      } catch {
+        setUsageData(null)
+        setUsageError('토큰 사용량을 가져올 수 없습니다. (CLIProxyAPI 연결 확인)')
+      } finally {
+        setUsageLoading(false)
+      }
+    })()
+
+    await Promise.allSettled([botTask, usageTask])
+    setRefreshing(false)
   }, [checkServices])
 
   useEffect(() => {
@@ -268,30 +325,63 @@ export default function StatusPage() {
         </button>
       </div>
 
-      {loading ? (
-        <div className="space-y-4">
-          <div className="skeleton h-48 rounded-2xl" />
-          <div className="skeleton h-48 rounded-2xl" />
-          <div className="skeleton h-64 rounded-2xl" />
-        </div>
-      ) : error ? (
-        <div
-          className="p-6 rounded-2xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)]"
-          style={{ backdropFilter: 'blur(12px)' }}
-        >
-          <div className="flex items-center gap-3 text-[var(--color-warning)]">
-            <svg className="w-6 h-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-            </svg>
-            <p className="text-base">{error}</p>
-          </div>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {/* Token Usage Section - HERO */}
-          {usageData && (usageData.accounts.length > 0 || usageData.codex.length > 0) && (
-            <div>
-              <h2 className="text-sm font-medium text-[var(--color-text-muted)] uppercase tracking-wider mb-3">Token Usage</h2>
+      <div className="space-y-4">
+        {/* Token Usage Section - HERO */}
+        <div>
+          <h2 className="text-sm font-medium text-[var(--color-text-muted)] uppercase tracking-wider mb-3">Token Usage</h2>
+
+          {usageLoading ? (
+            <div className="skeleton h-48 rounded-2xl" />
+          ) : usageNotConfigured ? (
+              <div
+                className="p-6 rounded-2xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)]"
+                style={{ backdropFilter: 'blur(12px)' }}
+              >
+                <div className="flex items-start gap-3">
+                  <svg className="w-6 h-6 flex-shrink-0 text-[var(--color-warning)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                  <div className="flex-1">
+                    <h3 className="text-base font-semibold text-[var(--color-text-primary)]">CLIProxyAPI 설정 필요</h3>
+                    <p className="text-sm text-[var(--color-text-secondary)] mt-1">
+                      토큰 사용량 모니터링은{' '}
+                      <a
+                        href="https://github.com/router-for-me/CLIProxyAPI"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[var(--color-accent-light)] sm:hover:text-[var(--color-accent)] underline underline-offset-4"
+                      >
+                        CLIProxyAPI
+                      </a>
+                      {' '}연동이 필요합니다.
+                    </p>
+                    <div className="mt-3 text-sm text-[var(--color-text-secondary)] space-y-1">
+                      <p>1) CLIProxyAPI를 실행합니다.</p>
+                      <p>2) Vercel 프로젝트 환경변수에 아래 값을 추가합니다.</p>
+                    </div>
+                    <pre className="mt-3 p-3 rounded-xl bg-[var(--color-bg-base)] border border-[var(--color-border-subtle)] text-xs text-[var(--color-text-primary)] overflow-x-auto">
+{`CLIPROXY_URL="http://localhost:8317"
+CLIPROXY_MANAGEMENT_KEY="your-management-key"`}
+                    </pre>
+                    <p className="text-xs text-[var(--color-text-muted)] mt-2">
+                      설정 후 새로고침하면 토큰 사용량 카드가 표시됩니다.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ) : usageError ? (
+              <div
+                className="p-6 rounded-2xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)]"
+                style={{ backdropFilter: 'blur(12px)' }}
+              >
+                <div className="flex items-center gap-3 text-[var(--color-warning)]">
+                  <svg className="w-6 h-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                  <p className="text-base">{usageError}</p>
+                </div>
+              </div>
+            ) : usageData && (usageData.accounts.length > 0 || usageData.codex.length > 0) ? (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {usageData.accounts.map((account, idx) => (
                   <div
@@ -396,74 +486,92 @@ export default function StatusPage() {
                   </div>
                 ))}
               </div>
-            </div>
-          )}
-
-          {/* Bot Status Section - Compact */}
-          {botStatus && botStatus.bots.length > 0 && (
-            <div>
-              <h2 className="text-sm font-medium text-[var(--color-text-muted)] uppercase tracking-wider mb-3">Bot Status</h2>
+            ) : (
               <div
-                className="rounded-2xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden"
+                className="p-6 rounded-2xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)]"
                 style={{ backdropFilter: 'blur(12px)' }}
               >
-                {botStatus.bots.map((bot) => (
-                  <BotRow key={bot.id} bot={bot} />
-                ))}
+                <p className="text-[var(--color-text-muted)] text-center">토큰 사용량 데이터가 없습니다.</p>
               </div>
-            </div>
-          )}
+            )}
+        </div>
 
-          {/* External Services Section - Inline */}
-          {services.length > 0 && (
-            <div>
-              <h2 className="text-sm font-medium text-[var(--color-text-muted)] uppercase tracking-wider mb-3">Dashboards</h2>
-              <div
-                className="p-4 rounded-2xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] flex items-center gap-6 flex-wrap"
-                style={{ backdropFilter: 'blur(12px)' }}
-              >
-                {services.map((svc) => {
-                  const isOnline = svc.status === 'online'
-                  const isChecking = svc.status === 'checking'
-                  return (
-                    <div key={svc.name} className="flex items-center gap-2">
-                      <span
-                        className={`w-2 h-2 rounded-full flex-shrink-0 ${isChecking ? 'bg-[var(--color-text-muted)] animate-pulse' : isOnline ? 'bg-[var(--color-success)]' : 'bg-[var(--color-danger)]'}`}
-                        style={isOnline ? { boxShadow: '0 0 8px var(--color-success)' } : {}}
-                      />
-                      {isOnline ? (
-                        <a
-                          href={svc.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-sm font-medium text-[var(--color-text-primary)] sm:hover:text-[var(--color-accent)] transition-colors flex items-center gap-1"
-                        >
-                          {svc.name}
-                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                          </svg>
-                        </a>
-                      ) : (
-                        <span className="text-sm font-medium text-[var(--color-text-muted)]">{svc.name}</span>
-                      )}
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* Empty state */}
-          {(!botStatus || botStatus.bots.length === 0) && (!usageData || (usageData.accounts.length === 0 && usageData.codex.length === 0)) && (
+        {/* Bot Status Section - Compact */}
+        {botLoading ? (
+          <div>
+            <h2 className="text-sm font-medium text-[var(--color-text-muted)] uppercase tracking-wider mb-3">Bot Status</h2>
+            <div className="skeleton h-48 rounded-2xl" />
+          </div>
+        ) : botStatus && botStatus.bots.length > 0 ? (
+          <div>
+            <h2 className="text-sm font-medium text-[var(--color-text-muted)] uppercase tracking-wider mb-3">Bot Status</h2>
             <div
-              className="p-6 rounded-2xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)]"
+              className="rounded-2xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] overflow-hidden"
               style={{ backdropFilter: 'blur(12px)' }}
             >
-              <p className="text-[var(--color-text-muted)] text-center">등록된 봇이나 계정이 없습니다.</p>
+              {botStatus.bots.map((bot) => (
+                <BotRow key={bot.id} bot={bot} />
+              ))}
             </div>
-          )}
-        </div>
-      )}
+          </div>
+        ) : botError ? (
+          <div
+            className="p-4 rounded-2xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)]"
+            style={{ backdropFilter: 'blur(12px)' }}
+          >
+            <p className="text-sm text-[var(--color-text-muted)]">{botError}</p>
+          </div>
+        ) : null}
+
+        {/* External Services Section - Inline */}
+        {services.length > 0 && (
+          <div>
+            <h2 className="text-sm font-medium text-[var(--color-text-muted)] uppercase tracking-wider mb-3">Dashboards</h2>
+            <div
+              className="p-4 rounded-2xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] flex items-center gap-6 flex-wrap"
+              style={{ backdropFilter: 'blur(12px)' }}
+            >
+              {services.map((svc) => {
+                const isOnline = svc.status === 'online'
+                const isChecking = svc.status === 'checking'
+                return (
+                  <div key={svc.name} className="flex items-center gap-2">
+                    <span
+                      className={`w-2 h-2 rounded-full flex-shrink-0 ${isChecking ? 'bg-[var(--color-text-muted)] animate-pulse' : isOnline ? 'bg-[var(--color-success)]' : 'bg-[var(--color-danger)]'}`}
+                      style={isOnline ? { boxShadow: '0 0 8px var(--color-success)' } : {}}
+                    />
+                    {isOnline ? (
+                      <a
+                        href={svc.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm font-medium text-[var(--color-text-primary)] sm:hover:text-[var(--color-accent)] transition-colors flex items-center gap-1"
+                      >
+                        {svc.name}
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                      </a>
+                    ) : (
+                      <span className="text-sm font-medium text-[var(--color-text-muted)]">{svc.name}</span>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Empty state */}
+        {botStatus && botStatus.bots.length === 0 && usageData && usageData.accounts.length === 0 && usageData.codex.length === 0 && !usageNotConfigured && !usageError && !botError && (
+          <div
+            className="p-6 rounded-2xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)]"
+            style={{ backdropFilter: 'blur(12px)' }}
+          >
+            <p className="text-[var(--color-text-muted)] text-center">등록된 봇이나 계정이 없습니다.</p>
+          </div>
+        )}
+      </div>
     </div>
   )
 }

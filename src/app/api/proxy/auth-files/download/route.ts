@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const USAGE_SERVER_URL = process.env.USAGE_SERVER_URL || 'http://100.98.23.106:3090'
+function sanitizeFilename(input: string) {
+  const base = input.split('/').pop()?.split('\\').pop() || 'auth.json'
+  return base.replace(/[^a-zA-Z0-9._-]/g, '_').slice(0, 200)
+}
 
 export async function GET(request: NextRequest) {
   const name = request.nextUrl.searchParams.get('name')
@@ -8,7 +11,23 @@ export async function GET(request: NextRequest) {
   if (!name) {
     return NextResponse.json(
       { error: 'Missing name parameter' },
-      { status: 400 }
+      {
+        status: 400,
+        headers: { 'Cache-Control': 'no-store' },
+      }
+    )
+  }
+
+  const cliproxyUrl = process.env.CLIPROXY_URL
+  const managementKey = process.env.CLIPROXY_MANAGEMENT_KEY
+
+  if (!cliproxyUrl || !managementKey) {
+    return NextResponse.json(
+      { error: 'CLIProxyAPI not configured' },
+      {
+        status: 503,
+        headers: { 'Cache-Control': 'no-store' },
+      }
     )
   }
 
@@ -18,39 +37,56 @@ export async function GET(request: NextRequest) {
 
     try {
       const response = await fetch(
-        `${USAGE_SERVER_URL}/api/auth-files/download?name=${encodeURIComponent(name)}`,
-        { signal: controller.signal }
+        `${cliproxyUrl}/v0/management/auth-files/download?name=${encodeURIComponent(name)}`,
+        {
+          headers: {
+            'X-Management-Key': managementKey,
+          },
+          signal: controller.signal,
+        }
       )
 
       clearTimeout(timeoutId)
 
       if (!response.ok) {
         return NextResponse.json(
-          { error: 'Auth file download failed' },
-          { status: 502 }
+          { error: 'CLIProxyAPI unreachable' },
+          {
+            status: 502,
+            headers: { 'Cache-Control': 'no-store' },
+          }
         )
       }
 
-      const data = await response.text()
+      const safeName = sanitizeFilename(name)
+      const data = await response.arrayBuffer()
       return new NextResponse(data, {
         status: 200,
         headers: {
-          'Content-Type': 'application/json',
-          'Content-Disposition': `attachment; filename="${name}"`,
+          'Content-Type': response.headers.get('content-type') || 'application/json',
+          'Content-Disposition': `attachment; filename="${safeName}"`,
+          'Cache-Control': 'no-store',
+          Pragma: 'no-cache',
         },
       })
     } catch {
       clearTimeout(timeoutId)
       return NextResponse.json(
-        { error: 'Usage server unreachable' },
-        { status: 502 }
+        { error: 'CLIProxyAPI unreachable' },
+        {
+          status: 502,
+          headers: { 'Cache-Control': 'no-store' },
+        }
       )
     }
   } catch (error) {
     console.error('Error proxying auth-files download:', error)
     return NextResponse.json(
       { error: 'Failed to proxy request' },
-      { status: 500 }
+      {
+        status: 500,
+        headers: { 'Cache-Control': 'no-store' },
+      }
     )
   }
 }

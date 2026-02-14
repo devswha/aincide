@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import PostList from '@/components/PostList'
 import LibraryCard from '@/components/LibraryCard'
+import { PostCategory, PostStatus, Prisma } from '@/generated/prisma'
 
 const POSTS_PER_PAGE = 10
 
@@ -18,21 +19,21 @@ export default async function Home({ searchParams }: PageProps) {
   const skip = (page - 1) * POSTS_PER_PAGE
 
   // Build query based on filter
-  let where: any = {}
-  let orderBy: any = { createdAt: 'desc' }
+  let where: Prisma.PostWhereInput = {}
+  const orderBy: Prisma.PostOrderByWithRelationInput = { createdAt: 'desc' }
 
   switch (filter) {
     case 'all':
-      where = { status: 'ACTIVE' }
+      where = { status: PostStatus.ACTIVE }
       break
     case 'random':
-      where = { status: 'ACTIVE', category: 'RANDOM' }
+      where = { status: PostStatus.ACTIVE, category: PostCategory.RANDOM }
       break
     case 'github':
-      where = { status: 'ACTIVE', githubUrl: { not: null } }
+      where = { status: PostStatus.ACTIVE, githubUrl: { not: null } }
       break
     case 'blocked':
-      where = { status: 'BLOCKED' }
+      where = { status: PostStatus.BLOCKED }
       break
     case 'library': {
       // Library uses LibraryEntry model, not Post directly
@@ -65,7 +66,7 @@ export default async function Home({ searchParams }: PageProps) {
           magiVote: entry.magiVote,
           seeleVote: entry.seeleVote,
           nervVote: entry.nervVote,
-          curatedAt: entry.curatedAt,
+          curatedAt: entry.curatedAt.toISOString(),
         },
       }))
 
@@ -78,7 +79,7 @@ export default async function Home({ searchParams }: PageProps) {
                 style={{ animationDelay: `${index * 60}ms`, opacity: 0, animationFillMode: 'forwards' }}
                 className="animate-fade-in-up"
               >
-                <LibraryCard post={post as any} />
+                <LibraryCard post={post} />
               </div>
             ))}
           </div>
@@ -118,7 +119,7 @@ export default async function Home({ searchParams }: PageProps) {
       )
     }
     default:
-      where = { status: 'ACTIVE' }
+      where = { status: PostStatus.ACTIVE }
   }
 
   // Fetch posts and total count

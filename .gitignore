@@ -3,3 +3,10 @@ node_modules/
 .env*
 test-results/
 tsconfig.tsbuildinfo
+.omc/
+.omx/
+HEARTBEAT.md
+IDENTITY.md
+SOUL.md
+TOOLS.md
+USER.md

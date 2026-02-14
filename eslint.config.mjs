@@ -12,6 +12,11 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Generated artifacts
+    "src/generated/**",
+    // Local agent/runtime state
+    ".omc/**",
+    ".omx/**",
   ]),
 ]);
 

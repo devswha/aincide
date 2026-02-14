@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useTransition } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import PostCard from './PostCard'
 import PostCardSkeleton from './skeletons/PostCardSkeleton'
@@ -21,20 +21,17 @@ export default function PostList({
 }: PostListProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [isLoading, setIsLoading] = useState(false)
-
-  useEffect(() => {
-    setIsLoading(false)
-  }, [initialPosts])
+  const [isPending, startTransition] = useTransition()
 
   const handlePageChange = (newPage: number) => {
-    setIsLoading(true)
-    const params = new URLSearchParams(searchParams.toString())
-    params.set('page', newPage.toString())
-    if (filter !== 'all') {
-      params.set('filter', filter)
-    }
-    router.push(`/?${params.toString()}`)
+    startTransition(() => {
+      const params = new URLSearchParams(searchParams.toString())
+      params.set('page', newPage.toString())
+      if (filter !== 'all') {
+        params.set('filter', filter)
+      }
+      router.push(`/?${params.toString()}`)
+    })
   }
 
   if (initialPosts.length === 0) {
@@ -53,7 +50,7 @@ export default function PostList({
 
   return (
     <div>
-      {isLoading ? (
+      {isPending ? (
         <div className="space-y-4 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-5">
           {[...Array(5)].map((_, i) => (
             <div
@@ -83,7 +80,7 @@ export default function PostList({
         <div className="flex justify-center items-center gap-4 mt-8">
           <button
             onClick={() => handlePageChange(initialPage - 1)}
-            disabled={initialPage <= 1 || isLoading}
+            disabled={initialPage <= 1 || isPending}
             className="px-5 py-2.5 bg-[var(--color-bg-surface)] text-[var(--color-text-secondary)] rounded-lg border border-[var(--color-border-default)] sm:hover:bg-[var(--color-bg-surface-hover)] sm:hover:border-[var(--color-accent)]/40 sm:hover:text-[var(--color-accent-light)] disabled:opacity-50 disabled:cursor-not-allowed disabled:sm:hover:bg-[var(--color-bg-surface)] disabled:sm:hover:border-[var(--color-border-default)] disabled:sm:hover:text-[var(--color-text-secondary)] transition-all duration-200 font-medium min-h-[44px] active:scale-[0.98]"
             style={{ touchAction: 'manipulation' }}
           >
@@ -94,7 +91,7 @@ export default function PostList({
           </span>
           <button
             onClick={() => handlePageChange(initialPage + 1)}
-            disabled={initialPage >= totalPages || isLoading}
+            disabled={initialPage >= totalPages || isPending}
             className="px-5 py-2.5 bg-[var(--color-bg-surface)] text-[var(--color-text-secondary)] rounded-lg border border-[var(--color-border-default)] sm:hover:bg-[var(--color-bg-surface-hover)] sm:hover:border-[var(--color-accent)]/40 sm:hover:text-[var(--color-accent-light)] disabled:opacity-50 disabled:cursor-not-allowed disabled:sm:hover:bg-[var(--color-bg-surface)] disabled:sm:hover:border-[var(--color-border-default)] disabled:sm:hover:text-[var(--color-text-secondary)] transition-all duration-200 font-medium min-h-[44px] active:scale-[0.98]"
             style={{ touchAction: 'manipulation' }}
           >

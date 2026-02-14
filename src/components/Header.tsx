@@ -2,29 +2,30 @@
 
 import Link from 'next/link'
 import { useSearchParams, usePathname } from 'next/navigation'
+import { Suspense } from 'react'
 
-export default function Header() {
+function HeaderContent() {
   const searchParams = useSearchParams()
   const pathname = usePathname()
   const activeFilter = searchParams.get('filter') || 'all'
 
   const filters = [
-    { key: 'all', label: '전체', icon: (
+    { key: 'all', label: '전체', href: '/?filter=all', icon: (
       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
       </svg>
     )},
-    { key: 'random', label: '뻘글', icon: (
+    { key: 'random', label: '뻘글', href: '/?filter=random', icon: (
       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
     )},
-    { key: 'github', label: 'GitHub', icon: (
+    { key: 'github', label: 'GitHub', href: '/?filter=github', icon: (
       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
       </svg>
     )},
-    { key: 'library', label: 'Library', icon: (
+    { key: 'library', label: 'Library', href: '/?filter=library', icon: (
       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
       </svg>
@@ -83,11 +84,15 @@ export default function Header() {
         {/* Secondary Nav / Filter Bar */}
         <div className="flex items-center gap-1 lg:gap-2 overflow-x-auto lg:overflow-x-visible lg:flex-wrap pb-3 -mx-4 px-4 lg:mx-0 lg:px-0 scrollbar-hide">
           {filters.map((filter) => {
-            const isActive = activeFilter === filter.key
-            const href = `/?filter=${filter.key}`
+            const isExternal = filter.href.startsWith('http')
+            const isActive = isExternal ? false : (
+              filter.href === '/todo' ? pathname === '/todo' :
+              filter.href === '/status' ? pathname === '/status' :
+              filter.href.includes('filter') ? (pathname === '/' && activeFilter === filter.key) :
+              false
+            )
 
-            // External link (http)
-            if ('href' in filter && filter.href && filter.href.startsWith('http')) {
+            if (isExternal) {
               return (
                 <a
                   key={filter.key}
@@ -105,35 +110,10 @@ export default function Header() {
               )
             }
 
-            // Internal link (like /todo)
-            if ('href' in filter && filter.href && filter.href.startsWith('/')) {
-              const isInternalActive = pathname === filter.href
-              return (
-                <Link
-                  key={filter.key}
-                  href={filter.href}
-                  className={`relative flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 whitespace-nowrap min-h-[44px]
-                    ${isInternalActive
-                      ? 'text-[var(--color-text-primary)] bg-[var(--color-bg-elevated)] ring-1 ring-[var(--color-border-hover)] shadow-sm'
-                      : 'text-[var(--color-text-secondary)] sm:hover:text-[var(--color-text-primary)] sm:hover:bg-[var(--color-bg-subtle)]'
-                    }`}
-                  style={{ touchAction: 'manipulation' }}
-                >
-                  <span className={isInternalActive ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-muted)]'}>
-                    {filter.icon}
-                  </span>
-                  {filter.label}
-                  {isInternalActive && (
-                    <span className="absolute inset-x-0 -bottom-3 h-0.5 bg-[var(--color-accent)] rounded-t-full" />
-                  )}
-                </Link>
-              )
-            }
-
             return (
               <Link
                 key={filter.key}
-                href={href}
+                href={filter.href}
                 className={`
                   relative flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 whitespace-nowrap min-h-[44px]
                   ${isActive
@@ -156,5 +136,13 @@ export default function Header() {
         </div>
       </div>
     </header>
+  )
+}
+
+export default function Header() {
+  return (
+    <Suspense fallback={<div className="h-24 bg-[var(--color-bg-base)]" />}>
+      <HeaderContent />
+    </Suspense>
   )
 }

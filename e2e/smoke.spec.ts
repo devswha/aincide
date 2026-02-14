@@ -31,8 +31,10 @@ test.describe('AIncide 스모크 테스트', () => {
 
   test('status 페이지에 봇 정보 표시', async ({ page }) => {
     await page.goto('/status');
-    // 페이지에 텍스트 콘텐츠가 있는지
-    const body = page.locator('body');
-    await expect(body).not.toBeEmpty();
+    // CLIProxy 미설정이면 설정 가이드가 보여야 하고,
+    // 설정되어 있으면 사용량 카드(Claude MAX/Codex)가 보여야 한다.
+    const setupGuide = page.getByText('CLIProxyAPI 설정 필요');
+    const usageCard = page.getByText('Claude MAX').or(page.getByText('Codex'));
+    await expect(setupGuide.or(usageCard)).toBeVisible({ timeout: 15000 });
   });
 });
