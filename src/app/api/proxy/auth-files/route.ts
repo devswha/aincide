@@ -3,7 +3,8 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function GET(request: NextRequest) {
   try {
     const cliproxyUrl = process.env.CLIPROXY_URL
-    const managementKey = process.env.CLIPROXY_MANAGEMENT_KEY
+    const managementKey =
+      process.env.CLIPROXY_MANAGEMENT_KEY || process.env.CLIPROXY_KEY
 
     if (!cliproxyUrl || !managementKey) {
       return NextResponse.json(

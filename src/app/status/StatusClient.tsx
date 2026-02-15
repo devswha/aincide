@@ -377,7 +377,9 @@ export default function StatusClient({ usageConfigured }: { usageConfigured: boo
                   </div>
                   <pre className="mt-3 p-3 rounded-xl bg-[var(--color-bg-base)] border border-[var(--color-border-subtle)] text-xs text-[var(--color-text-primary)] overflow-x-auto">
                     {`CLIPROXY_URL="https://your-cliproxy.example.com"
-CLIPROXY_MANAGEMENT_KEY="your-management-key"`}
+CLIPROXY_MANAGEMENT_KEY="your-management-key"
+# or
+CLIPROXY_KEY="your-management-key"`}
                   </pre>
                   <p className="text-xs text-[var(--color-text-muted)] mt-2">
                     Vercel에서 접근 가능한 URL이어야 합니다. (localhost는 Vercel 서버 자신을 의미)

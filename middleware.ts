@@ -14,7 +14,9 @@ export function middleware(request: NextRequest) {
   const pass = process.env.STATUS_BASIC_PASS
 
   // Safe-by-default: if management secrets are present, require auth in production.
-  const hasSensitiveConfig = Boolean(process.env.CLIPROXY_MANAGEMENT_KEY)
+  const hasSensitiveConfig = Boolean(
+    process.env.CLIPROXY_MANAGEMENT_KEY || process.env.CLIPROXY_KEY
+  )
 
   if (process.env.NODE_ENV === 'production' && (!user || !pass) && hasSensitiveConfig) {
     return new NextResponse('Not Found', { status: 404 })
