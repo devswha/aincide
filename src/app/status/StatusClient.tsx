@@ -376,9 +376,12 @@ export default function StatusClient({ usageConfigured }: { usageConfigured: boo
                     <p>2) Vercel 프로젝트 환경변수에 아래 값을 추가합니다.</p>
                   </div>
                   <pre className="mt-3 p-3 rounded-xl bg-[var(--color-bg-base)] border border-[var(--color-border-subtle)] text-xs text-[var(--color-text-primary)] overflow-x-auto">
-                    {`CLIPROXY_URL="http://localhost:8317"
+                    {`CLIPROXY_URL="https://your-cliproxy.example.com"
 CLIPROXY_MANAGEMENT_KEY="your-management-key"`}
                   </pre>
+                  <p className="text-xs text-[var(--color-text-muted)] mt-2">
+                    Vercel에서 접근 가능한 URL이어야 합니다. (localhost는 Vercel 서버 자신을 의미)
+                  </p>
                   <p className="text-xs text-[var(--color-text-muted)] mt-2">
                     설정 후 새로고침하면 토큰 사용량 카드가 표시됩니다.
                   </p>
