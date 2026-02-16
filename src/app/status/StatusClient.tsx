@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { BOT_API_URL, QUANT_DASHBOARD_URL, STOCK_DASHBOARD_URL } from '@/lib/constants'
 
 // === TYPE DEFINITIONS ===
 
@@ -191,20 +192,44 @@ export default function StatusClient({ usageConfigured }: { usageConfigured: boo
   const [usageError, setUsageError] = useState<string | null>(null)
   const [usageNotConfigured, setUsageNotConfigured] = useState(!usageConfigured)
   const [services, setServices] = useState<ServiceHealth[]>([
-    { name: 'Quant Dashboard', url: '', status: 'checking', description: 'magi-quant 트레이딩 대시보드' },
-    { name: 'Stock Dashboard', url: '', status: 'checking', description: 'magi-stock 주식 대시보드' },
+    { name: 'Quant Dashboard', url: QUANT_DASHBOARD_URL, status: 'checking', description: 'magi-quant 트레이딩 대시보드' },
+    { name: 'Stock Dashboard', url: STOCK_DASHBOARD_URL, status: 'checking', description: 'magi-stock 주식 대시보드' },
   ])
 
   const checkServices = useCallback(async () => {
+    // Try server-side proxy first
     try {
       const response = await fetch('/api/proxy/services')
       if (response.ok) {
         const results: ServiceHealth[] = await response.json()
-        setServices(results)
+        if (results.some(s => s.status === 'online')) {
+          setServices(results)
+          return
+        }
       }
     } catch {
-      // Services check failed silently
+      // Server proxy unavailable
     }
+
+    // Fallback: direct health check from browser (works when on Tailscale)
+    const directServices = [
+      { name: 'Quant Dashboard', url: QUANT_DASHBOARD_URL, description: 'magi-quant 트레이딩 대시보드' },
+      { name: 'Stock Dashboard', url: STOCK_DASHBOARD_URL, description: 'magi-stock 주식 대시보드' },
+    ]
+    const results = await Promise.all(
+      directServices.map(async (svc): Promise<ServiceHealth> => {
+        try {
+          const controller = new AbortController()
+          const timeout = setTimeout(() => controller.abort(), 3000)
+          await fetch(svc.url, { signal: controller.signal, mode: 'no-cors' })
+          clearTimeout(timeout)
+          return { name: svc.name, url: svc.url, status: 'online', description: svc.description }
+        } catch {
+          return { name: svc.name, url: svc.url, status: 'offline', description: svc.description }
+        }
+      })
+    )
+    setServices(results)
   }, [])
 
   const fetchAll = useCallback(async () => {
@@ -226,13 +251,23 @@ export default function StatusClient({ usageConfigured }: { usageConfigured: boo
     checkServices()
 
     const fetchBotStatus = async (): Promise<BotStatusData> => {
-      const response = await fetch('/api/proxy/bot-status')
-      if (!response.ok) throw new Error(`bot-status:${response.status}`)
-      const data = await response.json()
-      return {
-        bots: Array.isArray(data?.bots) ? data.bots : [],
+      const parseBotData = (data: Record<string, unknown>): BotStatusData => ({
+        bots: Array.isArray(data?.bots) ? (data.bots as BotInfo[]) : [],
         serverUptime: typeof data?.serverUptime === 'string' ? data.serverUptime : '',
+      })
+
+      // Try server-side proxy first
+      try {
+        const response = await fetch('/api/proxy/bot-status')
+        if (response.ok) return parseBotData(await response.json())
+      } catch {
+        // Server proxy unavailable
       }
+
+      // Fallback: direct fetch from browser (works when on Tailscale)
+      const response = await fetch(`${BOT_API_URL}/api/bot-status`)
+      if (!response.ok) throw new Error(`bot-status:${response.status}`)
+      return parseBotData(await response.json())
     }
 
     const fetchUsage = async (): Promise<
@@ -272,7 +307,7 @@ export default function StatusClient({ usageConfigured }: { usageConfigured: boo
         setBotStatus(await fetchBotStatus())
       } catch {
         setBotStatus(null)
-        setBotError('봇 상태를 가져올 수 없습니다. (USAGE_SERVER_URL 또는 네트워크 상태 확인)')
+        setBotError('봇 상태를 가져올 수 없습니다. Tailscale 연결 상태를 확인하세요.')
       } finally {
         setBotLoading(false)
       }
@@ -541,6 +576,14 @@ CLIPROXY_KEY="your-management-key"`}
             style={{ backdropFilter: 'blur(12px)' }}
           >
             <p className="text-sm text-[var(--color-text-muted)]">{botError}</p>
+            <a
+              href={`${BOT_API_URL}/api/bot-status`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block mt-2 text-xs text-[var(--color-accent-light)] sm:hover:text-[var(--color-accent)] underline underline-offset-4"
+            >
+              직접 확인하기 →
+            </a>
           </div>
         ) : null}
 
