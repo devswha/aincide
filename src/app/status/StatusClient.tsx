@@ -276,7 +276,7 @@ export default function StatusClient({ usageConfigured }: { usageConfigured: boo
     > => {
       if (!usageConfigured) return { kind: 'not_configured' }
 
-      const response = await fetch('/api/proxy/usage')
+      const response = await fetch('/api/proxy/bot-usage')
 
       let data: { error?: string; accounts?: unknown; codex?: unknown } | null = null
       try {
@@ -285,7 +285,7 @@ export default function StatusClient({ usageConfigured }: { usageConfigured: boo
         data = null
       }
 
-      if (response.status === 503 && data?.error === 'CLIProxyAPI not configured') {
+      if (response.status === 503 && data?.error === 'Usage server not configured') {
         return { kind: 'not_configured' }
       }
 
