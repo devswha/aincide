@@ -75,7 +75,7 @@ export async function POST(
     }
 
     // Perform transaction: upsert vote and update post counts
-    const [vote, updatedPost] = await prisma.$transaction([
+    const [, updatedPost] = await prisma.$transaction([
       prisma.vote.upsert({
         where: {
           postId_visitorId: {
@@ -109,8 +109,7 @@ export async function POST(
       upvotes: updatedPost.upvotes,
       downvotes: updatedPost.downvotes,
     })
-  } catch (error) {
-    console.error('Error voting on post:', error)
+  } catch {
     return NextResponse.json(
       { error: 'Failed to vote on post' },
       { status: 500 }

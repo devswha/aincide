@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const cliproxyUrl = process.env.CLIPROXY_URL
     const managementKey =
@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(data.usage || data, {
         headers: { 'Cache-Control': 'no-store' },
       })
-    } catch (error) {
+    } catch {
       clearTimeout(timeoutId)
       return NextResponse.json(
         { error: 'CLIProxyAPI unreachable' },
@@ -53,8 +53,7 @@ export async function GET(request: NextRequest) {
         }
       )
     }
-  } catch (error) {
-    console.error('Error proxying to CLIProxyAPI:', error)
+  } catch {
     return NextResponse.json(
       { error: 'Failed to proxy request' },
       {

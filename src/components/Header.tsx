@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useSearchParams, usePathname } from 'next/navigation'
 import { Suspense } from 'react'
+import { QUANT_DASHBOARD_URL, STOCK_DASHBOARD_URL } from '@/lib/constants'
 
 function HeaderContent() {
   const searchParams = useSearchParams()
@@ -40,12 +41,12 @@ function HeaderContent() {
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
       </svg>
     )},
-    { key: 'quant', label: 'Quant', href: 'http://100.98.23.106:5176', icon: (
+    { key: 'quant', label: 'Quant', href: QUANT_DASHBOARD_URL, icon: (
       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
       </svg>
     )},
-    { key: 'stock', label: 'Stock', href: 'http://100.98.23.106:3010', icon: (
+    { key: 'stock', label: 'Stock', href: STOCK_DASHBOARD_URL, icon: (
       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
       </svg>

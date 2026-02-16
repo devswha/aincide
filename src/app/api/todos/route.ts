@@ -11,8 +11,7 @@ export async function GET() {
       ]
     })
     return NextResponse.json(todos)
-  } catch (error) {
-    console.error('Failed to fetch todos:', error)
+  } catch {
     return NextResponse.json(
       { error: 'Failed to fetch todos' },
       { status: 500 }
@@ -40,8 +39,7 @@ export async function POST(request: Request) {
     })
 
     return NextResponse.json(todo, { status: 201 })
-  } catch (error) {
-    console.error('Failed to create todo:', error)
+  } catch {
     return NextResponse.json(
       { error: 'Failed to create todo' },
       { status: 500 }

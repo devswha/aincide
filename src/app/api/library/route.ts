@@ -29,8 +29,7 @@ export async function GET(request: NextRequest) {
       page,
       totalPages: Math.ceil(total / limit),
     })
-  } catch (error) {
-    console.error('Error fetching library entries:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch library entries' }, { status: 500 })
   }
 }
@@ -73,8 +72,7 @@ export async function POST(request: NextRequest) {
     })
 
     return NextResponse.json(entry, { status: 201 })
-  } catch (error) {
-    console.error('Error creating library entry:', error)
+  } catch {
     return NextResponse.json({ error: 'Failed to create library entry' }, { status: 500 })
   }
 }

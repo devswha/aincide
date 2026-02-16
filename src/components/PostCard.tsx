@@ -24,6 +24,25 @@ function extractGitHubDescription(content: string): string | null {
   return null
 }
 
+function GitHubUrlButton({ url }: { url: string }) {
+  return (
+    <div className="mb-4">
+      <button
+        onClick={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          window.open(url, '_blank', 'noopener,noreferrer')
+        }}
+        className="inline-flex items-center gap-2 px-3 py-1.5 bg-[var(--color-bg-subtle)] rounded-lg text-xs font-mono text-[var(--color-text-secondary)] border border-[var(--color-border-subtle)] sm:hover:border-[var(--color-border-hover)] transition-colors"
+        style={{ touchAction: 'manipulation' }}
+      >
+        <GitHubIcon className="w-3.5 h-3.5" />
+        {url.replace('https://github.com/', '')}
+      </button>
+    </div>
+  )
+}
+
 interface PostCardProps {
   post: Post & { _count?: { comments: number } }
 }
@@ -88,22 +107,7 @@ export default function PostCard({ post }: PostCardProps) {
               )}
 
               {/* GitHub URL button */}
-              {post.githubUrl && (
-                <div className="mb-4">
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      window.open(post.githubUrl!, '_blank', 'noopener,noreferrer')
-                    }}
-                    className="inline-flex items-center gap-2 px-3 py-1.5 bg-[var(--color-bg-subtle)] rounded-lg text-xs font-mono text-[var(--color-text-secondary)] border border-[var(--color-border-subtle)] sm:hover:border-[var(--color-border-hover)] transition-colors"
-                    style={{ touchAction: 'manipulation' }}
-                  >
-                    <GitHubIcon className="w-3.5 h-3.5" />
-                    {post.githubUrl.replace('https://github.com/', '')}
-                  </button>
-                </div>
-              )}
+              {post.githubUrl && <GitHubUrlButton url={post.githubUrl} />}
             </>
           ) : (
             <>
@@ -119,22 +123,7 @@ export default function PostCard({ post }: PostCardProps) {
                 dangerouslySetInnerHTML={{ __html: parseSimpleMarkdown(truncatedContent) }}
               />
 
-              {post.githubUrl && (
-                <div className="mb-4">
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      window.open(post.githubUrl!, '_blank', 'noopener,noreferrer')
-                    }}
-                    className="inline-flex items-center gap-2 px-3 py-1.5 bg-[var(--color-bg-subtle)] rounded-lg text-xs font-mono text-[var(--color-text-secondary)] border border-[var(--color-border-subtle)] sm:hover:border-[var(--color-border-hover)] transition-colors"
-                    style={{ touchAction: 'manipulation' }}
-                  >
-                    <GitHubIcon className="w-3.5 h-3.5" />
-                    {post.githubUrl.replace('https://github.com/', '')}
-                  </button>
-                </div>
-              )}
+              {post.githubUrl && <GitHubUrlButton url={post.githubUrl} />}
             </>
           )}
 

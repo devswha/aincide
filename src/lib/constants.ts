@@ -1,4 +1,5 @@
-export const API_BASE_URL = 'http://100.98.23.106'
-export const BOT_API_URL = `${API_BASE_URL}:3090`
-export const QUANT_DASHBOARD_URL = `${API_BASE_URL}:5176`
-export const STOCK_DASHBOARD_URL = `${API_BASE_URL}:3010`
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://100.123.228.51'
+
+export const BOT_API_URL = process.env.NEXT_PUBLIC_BOT_API_URL || `${API_BASE_URL}:3090`
+export const QUANT_DASHBOARD_URL = process.env.NEXT_PUBLIC_QUANT_DASHBOARD_URL || `${API_BASE_URL}:5176`
+export const STOCK_DASHBOARD_URL = process.env.NEXT_PUBLIC_STOCK_DASHBOARD_URL || `${API_BASE_URL}:3010`

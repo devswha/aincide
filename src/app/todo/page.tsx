@@ -36,8 +36,8 @@ export default function TodoPage() {
         const data = await res.json()
         setTodos(data)
       }
-    } catch (error) {
-      console.error('Failed to fetch todos:', error)
+    } catch {
+      // silently handled - loading state shown to user
     } finally {
       setLoading(false)
     }
@@ -47,7 +47,7 @@ export default function TodoPage() {
     fetchTodos()
   }, [fetchTodos])
 
-  const addTodo = async (e: React.FormEvent) => {
+  const addTodo = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!title.trim() || submitting) return
 
@@ -63,8 +63,8 @@ export default function TodoPage() {
         setPriority('MEDIUM')
         await fetchTodos()
       }
-    } catch (error) {
-      console.error('Failed to add todo:', error)
+    } catch {
+      // silently handled - UI state manages errors
     } finally {
       setSubmitting(false)
     }
@@ -82,8 +82,8 @@ export default function TodoPage() {
           prev.map(t => (t.id === id ? { ...t, completed: !completed } : t))
         )
       }
-    } catch (error) {
-      console.error('Failed to toggle todo:', error)
+    } catch {
+      // silently handled - UI state manages errors
     }
   }
 
@@ -93,8 +93,8 @@ export default function TodoPage() {
       if (res.ok) {
         setTodos(prev => prev.filter(t => t.id !== id))
       }
-    } catch (error) {
-      console.error('Failed to delete todo:', error)
+    } catch {
+      // silently handled - UI state manages errors
     }
   }
 
@@ -197,6 +197,7 @@ export default function TodoPage() {
                     : 'border-[var(--color-border-default)] sm:hover:border-[var(--color-accent)]'
                   }`}
                 style={{ touchAction: 'manipulation' }}
+                aria-label={todo.completed ? '완료 취소' : '완료로 표시'}
               >
                 {todo.completed && (
                   <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -231,7 +232,8 @@ export default function TodoPage() {
               <button
                 onClick={() => deleteTodo(todo.id)}
                 className="flex-shrink-0 min-h-[44px] min-w-[44px] flex items-center justify-center text-[var(--color-text-muted)] sm:hover:text-[var(--color-danger)] transition-colors duration-200 opacity-0 group-hover:opacity-100 sm:opacity-0 sm:group-hover:opacity-100 lg:opacity-100"
-                style={{ touchAction: 'manipulation', opacity: undefined }}
+                style={{ touchAction: 'manipulation' }}
+                aria-label="할 일 삭제"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
