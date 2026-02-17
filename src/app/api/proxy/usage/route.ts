@@ -158,14 +158,17 @@ export async function GET() {
     const codexEntries: AuthFileEntry[] = []
     const geminiEntries: AuthFileEntry[] = []
 
+    const HIDDEN_EMAILS = new Set(['hadaneywoo@gmail.com'])
+
     for (const entry of files) {
       if (entry.disabled) continue
+      if (HIDDEN_EMAILS.has(entry.email || entry.name)) continue
       const provider = (entry.provider || entry.type || '').toLowerCase()
       if (provider === 'claude' || provider === 'anthropic') {
         claudeEntries.push(entry)
       } else if (provider === 'codex') {
         codexEntries.push(entry)
-      } else if (provider === 'gemini-cli' || provider === 'antigravity') {
+      } else if (provider === 'gemini-cli') {
         geminiEntries.push(entry)
       }
     }

@@ -4,7 +4,6 @@ import UsageGauge from './UsageGauge'
 
 const PROVIDER_LABELS: Record<string, string> = {
   'gemini-cli': 'Gemini CLI',
-  'antigravity': 'Antigravity',
 }
 
 export default function GeminiCard({
