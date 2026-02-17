@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { AccountUsage, CodexUsage, GeminiUsage, GeminiQuotaBucket, AnthropicLimit, CodexRateWindow } from '@/types/status'
+import { prisma } from '@/lib/prisma'
 
 const CLIPROXY_URL = process.env.CLIPROXY_URL
 const MANAGEMENT_KEY = process.env.CLIPROXY_MANAGEMENT_KEY || process.env.CLIPROXY_KEY
@@ -235,6 +236,24 @@ export async function GET() {
         } : undefined,
       }
     })
+
+    // Save usage snapshots to DB (fire-and-forget, no delay to response)
+    const now = new Date()
+    const METRICS = ['five_hour', 'seven_day', 'seven_day_sonnet'] as const
+    const snapshots: { account: string; metric: string; utilization: number; timestamp: Date }[] = []
+    for (const acc of accounts) {
+      for (const metric of METRICS) {
+        const val = acc.usage[metric]?.utilization
+        if (typeof val === 'number') {
+          snapshots.push({ account: acc.email, metric, utilization: val, timestamp: now })
+        }
+      }
+    }
+    if (snapshots.length > 0) {
+      prisma.usageSnapshot.createMany({ data: snapshots })
+        .then(() => prisma.usageSnapshot.deleteMany({ where: { timestamp: { lt: new Date(now.getTime() - 31 * 24 * 60 * 60 * 1000) } } }))
+        .catch((err) => console.error('Snapshot save error:', err))
+    }
 
     return NextResponse.json({ accounts, codex, gemini }, { headers: CACHE_HEADERS })
   } catch (err) {
