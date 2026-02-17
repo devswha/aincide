@@ -174,6 +174,14 @@ exports.Prisma.TodoScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.UsageSnapshotScalarFieldEnum = {
+  id: 'id',
+  account: 'account',
+  metric: 'metric',
+  utilization: 'utilization',
+  timestamp: 'timestamp'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -218,7 +226,8 @@ exports.Prisma.ModelName = {
   Comment: 'Comment',
   Vote: 'Vote',
   LibraryEntry: 'LibraryEntry',
-  Todo: 'Todo'
+  Todo: 'Todo',
+  UsageSnapshot: 'UsageSnapshot'
 };
 
 /**

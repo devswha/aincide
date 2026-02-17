@@ -38,6 +38,11 @@ export type LibraryEntry = $Result.DefaultSelection<Prisma.$LibraryEntryPayload>
  * 
  */
 export type Todo = $Result.DefaultSelection<Prisma.$TodoPayload>
+/**
+ * Model UsageSnapshot
+ * 
+ */
+export type UsageSnapshot = $Result.DefaultSelection<Prisma.$UsageSnapshotPayload>
 
 /**
  * Enums
@@ -275,6 +280,16 @@ export class PrismaClient<
     * ```
     */
   get todo(): Prisma.TodoDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.usageSnapshot`: Exposes CRUD operations for the **UsageSnapshot** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more UsageSnapshots
+    * const usageSnapshots = await prisma.usageSnapshot.findMany()
+    * ```
+    */
+  get usageSnapshot(): Prisma.UsageSnapshotDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -713,7 +728,8 @@ export namespace Prisma {
     Comment: 'Comment',
     Vote: 'Vote',
     LibraryEntry: 'LibraryEntry',
-    Todo: 'Todo'
+    Todo: 'Todo',
+    UsageSnapshot: 'UsageSnapshot'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -729,7 +745,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "post" | "comment" | "vote" | "libraryEntry" | "todo"
+      modelProps: "post" | "comment" | "vote" | "libraryEntry" | "todo" | "usageSnapshot"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1103,6 +1119,80 @@ export namespace Prisma {
           }
         }
       }
+      UsageSnapshot: {
+        payload: Prisma.$UsageSnapshotPayload<ExtArgs>
+        fields: Prisma.UsageSnapshotFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.UsageSnapshotFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UsageSnapshotPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.UsageSnapshotFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UsageSnapshotPayload>
+          }
+          findFirst: {
+            args: Prisma.UsageSnapshotFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UsageSnapshotPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.UsageSnapshotFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UsageSnapshotPayload>
+          }
+          findMany: {
+            args: Prisma.UsageSnapshotFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UsageSnapshotPayload>[]
+          }
+          create: {
+            args: Prisma.UsageSnapshotCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UsageSnapshotPayload>
+          }
+          createMany: {
+            args: Prisma.UsageSnapshotCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.UsageSnapshotCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UsageSnapshotPayload>[]
+          }
+          delete: {
+            args: Prisma.UsageSnapshotDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UsageSnapshotPayload>
+          }
+          update: {
+            args: Prisma.UsageSnapshotUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UsageSnapshotPayload>
+          }
+          deleteMany: {
+            args: Prisma.UsageSnapshotDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.UsageSnapshotUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.UsageSnapshotUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UsageSnapshotPayload>[]
+          }
+          upsert: {
+            args: Prisma.UsageSnapshotUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UsageSnapshotPayload>
+          }
+          aggregate: {
+            args: Prisma.UsageSnapshotAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateUsageSnapshot>
+          }
+          groupBy: {
+            args: Prisma.UsageSnapshotGroupByArgs<ExtArgs>
+            result: $Utils.Optional<UsageSnapshotGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.UsageSnapshotCountArgs<ExtArgs>
+            result: $Utils.Optional<UsageSnapshotCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1216,6 +1306,7 @@ export namespace Prisma {
     vote?: VoteOmit
     libraryEntry?: LibraryEntryOmit
     todo?: TodoOmit
+    usageSnapshot?: UsageSnapshotOmit
   }
 
   /* Types for Logging */
@@ -6875,6 +6966,1033 @@ export namespace Prisma {
 
 
   /**
+   * Model UsageSnapshot
+   */
+
+  export type AggregateUsageSnapshot = {
+    _count: UsageSnapshotCountAggregateOutputType | null
+    _avg: UsageSnapshotAvgAggregateOutputType | null
+    _sum: UsageSnapshotSumAggregateOutputType | null
+    _min: UsageSnapshotMinAggregateOutputType | null
+    _max: UsageSnapshotMaxAggregateOutputType | null
+  }
+
+  export type UsageSnapshotAvgAggregateOutputType = {
+    utilization: number | null
+  }
+
+  export type UsageSnapshotSumAggregateOutputType = {
+    utilization: number | null
+  }
+
+  export type UsageSnapshotMinAggregateOutputType = {
+    id: string | null
+    account: string | null
+    metric: string | null
+    utilization: number | null
+    timestamp: Date | null
+  }
+
+  export type UsageSnapshotMaxAggregateOutputType = {
+    id: string | null
+    account: string | null
+    metric: string | null
+    utilization: number | null
+    timestamp: Date | null
+  }
+
+  export type UsageSnapshotCountAggregateOutputType = {
+    id: number
+    account: number
+    metric: number
+    utilization: number
+    timestamp: number
+    _all: number
+  }
+
+
+  export type UsageSnapshotAvgAggregateInputType = {
+    utilization?: true
+  }
+
+  export type UsageSnapshotSumAggregateInputType = {
+    utilization?: true
+  }
+
+  export type UsageSnapshotMinAggregateInputType = {
+    id?: true
+    account?: true
+    metric?: true
+    utilization?: true
+    timestamp?: true
+  }
+
+  export type UsageSnapshotMaxAggregateInputType = {
+    id?: true
+    account?: true
+    metric?: true
+    utilization?: true
+    timestamp?: true
+  }
+
+  export type UsageSnapshotCountAggregateInputType = {
+    id?: true
+    account?: true
+    metric?: true
+    utilization?: true
+    timestamp?: true
+    _all?: true
+  }
+
+  export type UsageSnapshotAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which UsageSnapshot to aggregate.
+     */
+    where?: UsageSnapshotWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UsageSnapshots to fetch.
+     */
+    orderBy?: UsageSnapshotOrderByWithRelationInput | UsageSnapshotOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: UsageSnapshotWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UsageSnapshots from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UsageSnapshots.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned UsageSnapshots
+    **/
+    _count?: true | UsageSnapshotCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: UsageSnapshotAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: UsageSnapshotSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: UsageSnapshotMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: UsageSnapshotMaxAggregateInputType
+  }
+
+  export type GetUsageSnapshotAggregateType<T extends UsageSnapshotAggregateArgs> = {
+        [P in keyof T & keyof AggregateUsageSnapshot]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateUsageSnapshot[P]>
+      : GetScalarType<T[P], AggregateUsageSnapshot[P]>
+  }
+
+
+
+
+  export type UsageSnapshotGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UsageSnapshotWhereInput
+    orderBy?: UsageSnapshotOrderByWithAggregationInput | UsageSnapshotOrderByWithAggregationInput[]
+    by: UsageSnapshotScalarFieldEnum[] | UsageSnapshotScalarFieldEnum
+    having?: UsageSnapshotScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: UsageSnapshotCountAggregateInputType | true
+    _avg?: UsageSnapshotAvgAggregateInputType
+    _sum?: UsageSnapshotSumAggregateInputType
+    _min?: UsageSnapshotMinAggregateInputType
+    _max?: UsageSnapshotMaxAggregateInputType
+  }
+
+  export type UsageSnapshotGroupByOutputType = {
+    id: string
+    account: string
+    metric: string
+    utilization: number
+    timestamp: Date
+    _count: UsageSnapshotCountAggregateOutputType | null
+    _avg: UsageSnapshotAvgAggregateOutputType | null
+    _sum: UsageSnapshotSumAggregateOutputType | null
+    _min: UsageSnapshotMinAggregateOutputType | null
+    _max: UsageSnapshotMaxAggregateOutputType | null
+  }
+
+  type GetUsageSnapshotGroupByPayload<T extends UsageSnapshotGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<UsageSnapshotGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof UsageSnapshotGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], UsageSnapshotGroupByOutputType[P]>
+            : GetScalarType<T[P], UsageSnapshotGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type UsageSnapshotSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    account?: boolean
+    metric?: boolean
+    utilization?: boolean
+    timestamp?: boolean
+  }, ExtArgs["result"]["usageSnapshot"]>
+
+  export type UsageSnapshotSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    account?: boolean
+    metric?: boolean
+    utilization?: boolean
+    timestamp?: boolean
+  }, ExtArgs["result"]["usageSnapshot"]>
+
+  export type UsageSnapshotSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    account?: boolean
+    metric?: boolean
+    utilization?: boolean
+    timestamp?: boolean
+  }, ExtArgs["result"]["usageSnapshot"]>
+
+  export type UsageSnapshotSelectScalar = {
+    id?: boolean
+    account?: boolean
+    metric?: boolean
+    utilization?: boolean
+    timestamp?: boolean
+  }
+
+  export type UsageSnapshotOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "account" | "metric" | "utilization" | "timestamp", ExtArgs["result"]["usageSnapshot"]>
+
+  export type $UsageSnapshotPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "UsageSnapshot"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      account: string
+      metric: string
+      utilization: number
+      timestamp: Date
+    }, ExtArgs["result"]["usageSnapshot"]>
+    composites: {}
+  }
+
+  type UsageSnapshotGetPayload<S extends boolean | null | undefined | UsageSnapshotDefaultArgs> = $Result.GetResult<Prisma.$UsageSnapshotPayload, S>
+
+  type UsageSnapshotCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<UsageSnapshotFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: UsageSnapshotCountAggregateInputType | true
+    }
+
+  export interface UsageSnapshotDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['UsageSnapshot'], meta: { name: 'UsageSnapshot' } }
+    /**
+     * Find zero or one UsageSnapshot that matches the filter.
+     * @param {UsageSnapshotFindUniqueArgs} args - Arguments to find a UsageSnapshot
+     * @example
+     * // Get one UsageSnapshot
+     * const usageSnapshot = await prisma.usageSnapshot.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends UsageSnapshotFindUniqueArgs>(args: SelectSubset<T, UsageSnapshotFindUniqueArgs<ExtArgs>>): Prisma__UsageSnapshotClient<$Result.GetResult<Prisma.$UsageSnapshotPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one UsageSnapshot that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {UsageSnapshotFindUniqueOrThrowArgs} args - Arguments to find a UsageSnapshot
+     * @example
+     * // Get one UsageSnapshot
+     * const usageSnapshot = await prisma.usageSnapshot.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends UsageSnapshotFindUniqueOrThrowArgs>(args: SelectSubset<T, UsageSnapshotFindUniqueOrThrowArgs<ExtArgs>>): Prisma__UsageSnapshotClient<$Result.GetResult<Prisma.$UsageSnapshotPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first UsageSnapshot that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UsageSnapshotFindFirstArgs} args - Arguments to find a UsageSnapshot
+     * @example
+     * // Get one UsageSnapshot
+     * const usageSnapshot = await prisma.usageSnapshot.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends UsageSnapshotFindFirstArgs>(args?: SelectSubset<T, UsageSnapshotFindFirstArgs<ExtArgs>>): Prisma__UsageSnapshotClient<$Result.GetResult<Prisma.$UsageSnapshotPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first UsageSnapshot that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UsageSnapshotFindFirstOrThrowArgs} args - Arguments to find a UsageSnapshot
+     * @example
+     * // Get one UsageSnapshot
+     * const usageSnapshot = await prisma.usageSnapshot.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends UsageSnapshotFindFirstOrThrowArgs>(args?: SelectSubset<T, UsageSnapshotFindFirstOrThrowArgs<ExtArgs>>): Prisma__UsageSnapshotClient<$Result.GetResult<Prisma.$UsageSnapshotPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more UsageSnapshots that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UsageSnapshotFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all UsageSnapshots
+     * const usageSnapshots = await prisma.usageSnapshot.findMany()
+     * 
+     * // Get first 10 UsageSnapshots
+     * const usageSnapshots = await prisma.usageSnapshot.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const usageSnapshotWithIdOnly = await prisma.usageSnapshot.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends UsageSnapshotFindManyArgs>(args?: SelectSubset<T, UsageSnapshotFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UsageSnapshotPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a UsageSnapshot.
+     * @param {UsageSnapshotCreateArgs} args - Arguments to create a UsageSnapshot.
+     * @example
+     * // Create one UsageSnapshot
+     * const UsageSnapshot = await prisma.usageSnapshot.create({
+     *   data: {
+     *     // ... data to create a UsageSnapshot
+     *   }
+     * })
+     * 
+     */
+    create<T extends UsageSnapshotCreateArgs>(args: SelectSubset<T, UsageSnapshotCreateArgs<ExtArgs>>): Prisma__UsageSnapshotClient<$Result.GetResult<Prisma.$UsageSnapshotPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many UsageSnapshots.
+     * @param {UsageSnapshotCreateManyArgs} args - Arguments to create many UsageSnapshots.
+     * @example
+     * // Create many UsageSnapshots
+     * const usageSnapshot = await prisma.usageSnapshot.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends UsageSnapshotCreateManyArgs>(args?: SelectSubset<T, UsageSnapshotCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many UsageSnapshots and returns the data saved in the database.
+     * @param {UsageSnapshotCreateManyAndReturnArgs} args - Arguments to create many UsageSnapshots.
+     * @example
+     * // Create many UsageSnapshots
+     * const usageSnapshot = await prisma.usageSnapshot.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many UsageSnapshots and only return the `id`
+     * const usageSnapshotWithIdOnly = await prisma.usageSnapshot.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends UsageSnapshotCreateManyAndReturnArgs>(args?: SelectSubset<T, UsageSnapshotCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UsageSnapshotPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a UsageSnapshot.
+     * @param {UsageSnapshotDeleteArgs} args - Arguments to delete one UsageSnapshot.
+     * @example
+     * // Delete one UsageSnapshot
+     * const UsageSnapshot = await prisma.usageSnapshot.delete({
+     *   where: {
+     *     // ... filter to delete one UsageSnapshot
+     *   }
+     * })
+     * 
+     */
+    delete<T extends UsageSnapshotDeleteArgs>(args: SelectSubset<T, UsageSnapshotDeleteArgs<ExtArgs>>): Prisma__UsageSnapshotClient<$Result.GetResult<Prisma.$UsageSnapshotPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one UsageSnapshot.
+     * @param {UsageSnapshotUpdateArgs} args - Arguments to update one UsageSnapshot.
+     * @example
+     * // Update one UsageSnapshot
+     * const usageSnapshot = await prisma.usageSnapshot.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends UsageSnapshotUpdateArgs>(args: SelectSubset<T, UsageSnapshotUpdateArgs<ExtArgs>>): Prisma__UsageSnapshotClient<$Result.GetResult<Prisma.$UsageSnapshotPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more UsageSnapshots.
+     * @param {UsageSnapshotDeleteManyArgs} args - Arguments to filter UsageSnapshots to delete.
+     * @example
+     * // Delete a few UsageSnapshots
+     * const { count } = await prisma.usageSnapshot.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends UsageSnapshotDeleteManyArgs>(args?: SelectSubset<T, UsageSnapshotDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more UsageSnapshots.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UsageSnapshotUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many UsageSnapshots
+     * const usageSnapshot = await prisma.usageSnapshot.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends UsageSnapshotUpdateManyArgs>(args: SelectSubset<T, UsageSnapshotUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more UsageSnapshots and returns the data updated in the database.
+     * @param {UsageSnapshotUpdateManyAndReturnArgs} args - Arguments to update many UsageSnapshots.
+     * @example
+     * // Update many UsageSnapshots
+     * const usageSnapshot = await prisma.usageSnapshot.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more UsageSnapshots and only return the `id`
+     * const usageSnapshotWithIdOnly = await prisma.usageSnapshot.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends UsageSnapshotUpdateManyAndReturnArgs>(args: SelectSubset<T, UsageSnapshotUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UsageSnapshotPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one UsageSnapshot.
+     * @param {UsageSnapshotUpsertArgs} args - Arguments to update or create a UsageSnapshot.
+     * @example
+     * // Update or create a UsageSnapshot
+     * const usageSnapshot = await prisma.usageSnapshot.upsert({
+     *   create: {
+     *     // ... data to create a UsageSnapshot
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the UsageSnapshot we want to update
+     *   }
+     * })
+     */
+    upsert<T extends UsageSnapshotUpsertArgs>(args: SelectSubset<T, UsageSnapshotUpsertArgs<ExtArgs>>): Prisma__UsageSnapshotClient<$Result.GetResult<Prisma.$UsageSnapshotPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of UsageSnapshots.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UsageSnapshotCountArgs} args - Arguments to filter UsageSnapshots to count.
+     * @example
+     * // Count the number of UsageSnapshots
+     * const count = await prisma.usageSnapshot.count({
+     *   where: {
+     *     // ... the filter for the UsageSnapshots we want to count
+     *   }
+     * })
+    **/
+    count<T extends UsageSnapshotCountArgs>(
+      args?: Subset<T, UsageSnapshotCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], UsageSnapshotCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a UsageSnapshot.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UsageSnapshotAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends UsageSnapshotAggregateArgs>(args: Subset<T, UsageSnapshotAggregateArgs>): Prisma.PrismaPromise<GetUsageSnapshotAggregateType<T>>
+
+    /**
+     * Group by UsageSnapshot.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UsageSnapshotGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends UsageSnapshotGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: UsageSnapshotGroupByArgs['orderBy'] }
+        : { orderBy?: UsageSnapshotGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, UsageSnapshotGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetUsageSnapshotGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the UsageSnapshot model
+   */
+  readonly fields: UsageSnapshotFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for UsageSnapshot.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__UsageSnapshotClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the UsageSnapshot model
+   */
+  interface UsageSnapshotFieldRefs {
+    readonly id: FieldRef<"UsageSnapshot", 'String'>
+    readonly account: FieldRef<"UsageSnapshot", 'String'>
+    readonly metric: FieldRef<"UsageSnapshot", 'String'>
+    readonly utilization: FieldRef<"UsageSnapshot", 'Float'>
+    readonly timestamp: FieldRef<"UsageSnapshot", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * UsageSnapshot findUnique
+   */
+  export type UsageSnapshotFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UsageSnapshot
+     */
+    select?: UsageSnapshotSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UsageSnapshot
+     */
+    omit?: UsageSnapshotOmit<ExtArgs> | null
+    /**
+     * Filter, which UsageSnapshot to fetch.
+     */
+    where: UsageSnapshotWhereUniqueInput
+  }
+
+  /**
+   * UsageSnapshot findUniqueOrThrow
+   */
+  export type UsageSnapshotFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UsageSnapshot
+     */
+    select?: UsageSnapshotSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UsageSnapshot
+     */
+    omit?: UsageSnapshotOmit<ExtArgs> | null
+    /**
+     * Filter, which UsageSnapshot to fetch.
+     */
+    where: UsageSnapshotWhereUniqueInput
+  }
+
+  /**
+   * UsageSnapshot findFirst
+   */
+  export type UsageSnapshotFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UsageSnapshot
+     */
+    select?: UsageSnapshotSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UsageSnapshot
+     */
+    omit?: UsageSnapshotOmit<ExtArgs> | null
+    /**
+     * Filter, which UsageSnapshot to fetch.
+     */
+    where?: UsageSnapshotWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UsageSnapshots to fetch.
+     */
+    orderBy?: UsageSnapshotOrderByWithRelationInput | UsageSnapshotOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for UsageSnapshots.
+     */
+    cursor?: UsageSnapshotWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UsageSnapshots from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UsageSnapshots.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of UsageSnapshots.
+     */
+    distinct?: UsageSnapshotScalarFieldEnum | UsageSnapshotScalarFieldEnum[]
+  }
+
+  /**
+   * UsageSnapshot findFirstOrThrow
+   */
+  export type UsageSnapshotFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UsageSnapshot
+     */
+    select?: UsageSnapshotSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UsageSnapshot
+     */
+    omit?: UsageSnapshotOmit<ExtArgs> | null
+    /**
+     * Filter, which UsageSnapshot to fetch.
+     */
+    where?: UsageSnapshotWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UsageSnapshots to fetch.
+     */
+    orderBy?: UsageSnapshotOrderByWithRelationInput | UsageSnapshotOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for UsageSnapshots.
+     */
+    cursor?: UsageSnapshotWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UsageSnapshots from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UsageSnapshots.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of UsageSnapshots.
+     */
+    distinct?: UsageSnapshotScalarFieldEnum | UsageSnapshotScalarFieldEnum[]
+  }
+
+  /**
+   * UsageSnapshot findMany
+   */
+  export type UsageSnapshotFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UsageSnapshot
+     */
+    select?: UsageSnapshotSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UsageSnapshot
+     */
+    omit?: UsageSnapshotOmit<ExtArgs> | null
+    /**
+     * Filter, which UsageSnapshots to fetch.
+     */
+    where?: UsageSnapshotWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UsageSnapshots to fetch.
+     */
+    orderBy?: UsageSnapshotOrderByWithRelationInput | UsageSnapshotOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing UsageSnapshots.
+     */
+    cursor?: UsageSnapshotWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UsageSnapshots from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UsageSnapshots.
+     */
+    skip?: number
+    distinct?: UsageSnapshotScalarFieldEnum | UsageSnapshotScalarFieldEnum[]
+  }
+
+  /**
+   * UsageSnapshot create
+   */
+  export type UsageSnapshotCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UsageSnapshot
+     */
+    select?: UsageSnapshotSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UsageSnapshot
+     */
+    omit?: UsageSnapshotOmit<ExtArgs> | null
+    /**
+     * The data needed to create a UsageSnapshot.
+     */
+    data: XOR<UsageSnapshotCreateInput, UsageSnapshotUncheckedCreateInput>
+  }
+
+  /**
+   * UsageSnapshot createMany
+   */
+  export type UsageSnapshotCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many UsageSnapshots.
+     */
+    data: UsageSnapshotCreateManyInput | UsageSnapshotCreateManyInput[]
+  }
+
+  /**
+   * UsageSnapshot createManyAndReturn
+   */
+  export type UsageSnapshotCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UsageSnapshot
+     */
+    select?: UsageSnapshotSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the UsageSnapshot
+     */
+    omit?: UsageSnapshotOmit<ExtArgs> | null
+    /**
+     * The data used to create many UsageSnapshots.
+     */
+    data: UsageSnapshotCreateManyInput | UsageSnapshotCreateManyInput[]
+  }
+
+  /**
+   * UsageSnapshot update
+   */
+  export type UsageSnapshotUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UsageSnapshot
+     */
+    select?: UsageSnapshotSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UsageSnapshot
+     */
+    omit?: UsageSnapshotOmit<ExtArgs> | null
+    /**
+     * The data needed to update a UsageSnapshot.
+     */
+    data: XOR<UsageSnapshotUpdateInput, UsageSnapshotUncheckedUpdateInput>
+    /**
+     * Choose, which UsageSnapshot to update.
+     */
+    where: UsageSnapshotWhereUniqueInput
+  }
+
+  /**
+   * UsageSnapshot updateMany
+   */
+  export type UsageSnapshotUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update UsageSnapshots.
+     */
+    data: XOR<UsageSnapshotUpdateManyMutationInput, UsageSnapshotUncheckedUpdateManyInput>
+    /**
+     * Filter which UsageSnapshots to update
+     */
+    where?: UsageSnapshotWhereInput
+    /**
+     * Limit how many UsageSnapshots to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * UsageSnapshot updateManyAndReturn
+   */
+  export type UsageSnapshotUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UsageSnapshot
+     */
+    select?: UsageSnapshotSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the UsageSnapshot
+     */
+    omit?: UsageSnapshotOmit<ExtArgs> | null
+    /**
+     * The data used to update UsageSnapshots.
+     */
+    data: XOR<UsageSnapshotUpdateManyMutationInput, UsageSnapshotUncheckedUpdateManyInput>
+    /**
+     * Filter which UsageSnapshots to update
+     */
+    where?: UsageSnapshotWhereInput
+    /**
+     * Limit how many UsageSnapshots to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * UsageSnapshot upsert
+   */
+  export type UsageSnapshotUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UsageSnapshot
+     */
+    select?: UsageSnapshotSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UsageSnapshot
+     */
+    omit?: UsageSnapshotOmit<ExtArgs> | null
+    /**
+     * The filter to search for the UsageSnapshot to update in case it exists.
+     */
+    where: UsageSnapshotWhereUniqueInput
+    /**
+     * In case the UsageSnapshot found by the `where` argument doesn't exist, create a new UsageSnapshot with this data.
+     */
+    create: XOR<UsageSnapshotCreateInput, UsageSnapshotUncheckedCreateInput>
+    /**
+     * In case the UsageSnapshot was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<UsageSnapshotUpdateInput, UsageSnapshotUncheckedUpdateInput>
+  }
+
+  /**
+   * UsageSnapshot delete
+   */
+  export type UsageSnapshotDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UsageSnapshot
+     */
+    select?: UsageSnapshotSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UsageSnapshot
+     */
+    omit?: UsageSnapshotOmit<ExtArgs> | null
+    /**
+     * Filter which UsageSnapshot to delete.
+     */
+    where: UsageSnapshotWhereUniqueInput
+  }
+
+  /**
+   * UsageSnapshot deleteMany
+   */
+  export type UsageSnapshotDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which UsageSnapshots to delete
+     */
+    where?: UsageSnapshotWhereInput
+    /**
+     * Limit how many UsageSnapshots to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * UsageSnapshot without action
+   */
+  export type UsageSnapshotDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UsageSnapshot
+     */
+    select?: UsageSnapshotSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UsageSnapshot
+     */
+    omit?: UsageSnapshotOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -6955,6 +8073,17 @@ export namespace Prisma {
   };
 
   export type TodoScalarFieldEnum = (typeof TodoScalarFieldEnum)[keyof typeof TodoScalarFieldEnum]
+
+
+  export const UsageSnapshotScalarFieldEnum: {
+    id: 'id',
+    account: 'account',
+    metric: 'metric',
+    utilization: 'utilization',
+    timestamp: 'timestamp'
+  };
+
+  export type UsageSnapshotScalarFieldEnum = (typeof UsageSnapshotScalarFieldEnum)[keyof typeof UsageSnapshotScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -7417,6 +8546,60 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"Todo"> | Date | string
   }
 
+  export type UsageSnapshotWhereInput = {
+    AND?: UsageSnapshotWhereInput | UsageSnapshotWhereInput[]
+    OR?: UsageSnapshotWhereInput[]
+    NOT?: UsageSnapshotWhereInput | UsageSnapshotWhereInput[]
+    id?: StringFilter<"UsageSnapshot"> | string
+    account?: StringFilter<"UsageSnapshot"> | string
+    metric?: StringFilter<"UsageSnapshot"> | string
+    utilization?: FloatFilter<"UsageSnapshot"> | number
+    timestamp?: DateTimeFilter<"UsageSnapshot"> | Date | string
+  }
+
+  export type UsageSnapshotOrderByWithRelationInput = {
+    id?: SortOrder
+    account?: SortOrder
+    metric?: SortOrder
+    utilization?: SortOrder
+    timestamp?: SortOrder
+  }
+
+  export type UsageSnapshotWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: UsageSnapshotWhereInput | UsageSnapshotWhereInput[]
+    OR?: UsageSnapshotWhereInput[]
+    NOT?: UsageSnapshotWhereInput | UsageSnapshotWhereInput[]
+    account?: StringFilter<"UsageSnapshot"> | string
+    metric?: StringFilter<"UsageSnapshot"> | string
+    utilization?: FloatFilter<"UsageSnapshot"> | number
+    timestamp?: DateTimeFilter<"UsageSnapshot"> | Date | string
+  }, "id">
+
+  export type UsageSnapshotOrderByWithAggregationInput = {
+    id?: SortOrder
+    account?: SortOrder
+    metric?: SortOrder
+    utilization?: SortOrder
+    timestamp?: SortOrder
+    _count?: UsageSnapshotCountOrderByAggregateInput
+    _avg?: UsageSnapshotAvgOrderByAggregateInput
+    _max?: UsageSnapshotMaxOrderByAggregateInput
+    _min?: UsageSnapshotMinOrderByAggregateInput
+    _sum?: UsageSnapshotSumOrderByAggregateInput
+  }
+
+  export type UsageSnapshotScalarWhereWithAggregatesInput = {
+    AND?: UsageSnapshotScalarWhereWithAggregatesInput | UsageSnapshotScalarWhereWithAggregatesInput[]
+    OR?: UsageSnapshotScalarWhereWithAggregatesInput[]
+    NOT?: UsageSnapshotScalarWhereWithAggregatesInput | UsageSnapshotScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"UsageSnapshot"> | string
+    account?: StringWithAggregatesFilter<"UsageSnapshot"> | string
+    metric?: StringWithAggregatesFilter<"UsageSnapshot"> | string
+    utilization?: FloatWithAggregatesFilter<"UsageSnapshot"> | number
+    timestamp?: DateTimeWithAggregatesFilter<"UsageSnapshot"> | Date | string
+  }
+
   export type PostCreateInput = {
     id?: string
     title?: string | null
@@ -7823,6 +9006,62 @@ export namespace Prisma {
     priority?: EnumTodoPriorityFieldUpdateOperationsInput | $Enums.TodoPriority
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UsageSnapshotCreateInput = {
+    id?: string
+    account: string
+    metric: string
+    utilization: number
+    timestamp?: Date | string
+  }
+
+  export type UsageSnapshotUncheckedCreateInput = {
+    id?: string
+    account: string
+    metric: string
+    utilization: number
+    timestamp?: Date | string
+  }
+
+  export type UsageSnapshotUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    account?: StringFieldUpdateOperationsInput | string
+    metric?: StringFieldUpdateOperationsInput | string
+    utilization?: FloatFieldUpdateOperationsInput | number
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UsageSnapshotUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    account?: StringFieldUpdateOperationsInput | string
+    metric?: StringFieldUpdateOperationsInput | string
+    utilization?: FloatFieldUpdateOperationsInput | number
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UsageSnapshotCreateManyInput = {
+    id?: string
+    account: string
+    metric: string
+    utilization: number
+    timestamp?: Date | string
+  }
+
+  export type UsageSnapshotUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    account?: StringFieldUpdateOperationsInput | string
+    metric?: StringFieldUpdateOperationsInput | string
+    utilization?: FloatFieldUpdateOperationsInput | number
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UsageSnapshotUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    account?: StringFieldUpdateOperationsInput | string
+    metric?: StringFieldUpdateOperationsInput | string
+    utilization?: FloatFieldUpdateOperationsInput | number
+    timestamp?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -8258,6 +9497,65 @@ export namespace Prisma {
     _max?: NestedEnumTodoPriorityFilter<$PrismaModel>
   }
 
+  export type FloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[]
+    notIn?: number[]
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type UsageSnapshotCountOrderByAggregateInput = {
+    id?: SortOrder
+    account?: SortOrder
+    metric?: SortOrder
+    utilization?: SortOrder
+    timestamp?: SortOrder
+  }
+
+  export type UsageSnapshotAvgOrderByAggregateInput = {
+    utilization?: SortOrder
+  }
+
+  export type UsageSnapshotMaxOrderByAggregateInput = {
+    id?: SortOrder
+    account?: SortOrder
+    metric?: SortOrder
+    utilization?: SortOrder
+    timestamp?: SortOrder
+  }
+
+  export type UsageSnapshotMinOrderByAggregateInput = {
+    id?: SortOrder
+    account?: SortOrder
+    metric?: SortOrder
+    utilization?: SortOrder
+    timestamp?: SortOrder
+  }
+
+  export type UsageSnapshotSumOrderByAggregateInput = {
+    utilization?: SortOrder
+  }
+
+  export type FloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[]
+    notIn?: number[]
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
+  }
+
   export type CommentCreateNestedManyWithoutPostInput = {
     create?: XOR<CommentCreateWithoutPostInput, CommentUncheckedCreateWithoutPostInput> | CommentCreateWithoutPostInput[] | CommentUncheckedCreateWithoutPostInput[]
     connectOrCreate?: CommentCreateOrConnectWithoutPostInput | CommentCreateOrConnectWithoutPostInput[]
@@ -8458,6 +9756,14 @@ export namespace Prisma {
 
   export type EnumTodoPriorityFieldUpdateOperationsInput = {
     set?: $Enums.TodoPriority
+  }
+
+  export type FloatFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -8692,6 +9998,22 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumTodoPriorityFilter<$PrismaModel>
     _max?: NestedEnumTodoPriorityFilter<$PrismaModel>
+  }
+
+  export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[]
+    notIn?: number[]
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
   }
 
   export type CommentCreateWithoutPostInput = {

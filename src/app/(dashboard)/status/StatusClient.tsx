@@ -28,7 +28,7 @@ const UsageTimeChart = dynamic(() => import('./_components/UsageTimeChart'), {
   loading: () => <div className="skeleton h-64 rounded-2xl" />,
 })
 
-export default function StatusClient({ usageConfigured, usageHistoryConfigured }: { usageConfigured: boolean; usageHistoryConfigured: boolean }) {
+export default function StatusClient({ usageConfigured }: { usageConfigured: boolean }) {
   const [refreshing, setRefreshing] = useState(false)
 
   const { data: usageData, error: usageError, isLoading: usageLoading, isNotConfigured, mutate: mutateUsage } = useUsageData(usageConfigured)
@@ -127,7 +127,7 @@ export default function StatusClient({ usageConfigured, usageHistoryConfigured }
         </section>
 
         {/* Usage History Charts */}
-        {usageHistoryConfigured && usageData && usageData.accounts.length > 0 && (
+        {usageData && usageData.accounts.length > 0 && (
           <SectionErrorBoundary fallbackMessage="히스토리 차트를 불러오는 중 오류가 발생했습니다.">
             <section>
               <h2 className="text-sm font-medium text-[var(--color-text-muted)] uppercase tracking-wider mb-3">Usage History</h2>
