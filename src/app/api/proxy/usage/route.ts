@@ -184,7 +184,7 @@ export async function GET() {
     const accounts: AccountUsage[] = claudeEntries.map((entry, i) => {
       const usage = claudeResults[i]
       const isError = entry.unavailable || entry.status === 'disabled'
-      const planType = usage?.extra_usage?.is_enabled ? 'Plus' : 'MAX'
+      const planType = 'MAX'
       return {
         name: entry.label || entry.account || entry.name,
         email: entry.email || entry.name,
