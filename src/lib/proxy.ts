@@ -32,7 +32,9 @@ export async function proxyFetch(
     }
 
     const data = await response.json()
-    return NextResponse.json(data)
+    return NextResponse.json(data, {
+      headers: { 'Cache-Control': 'no-store, max-age=0' },
+    })
   } catch {
     clearTimeout(timeoutId)
     return NextResponse.json(
