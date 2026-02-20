@@ -6,6 +6,15 @@ const PROVIDER_LABELS: Record<string, string> = {
   'gemini-cli': 'Gemini CLI',
 }
 
+const MODEL_LABELS: Record<string, string> = {
+  'gemini-2.0-flash': '2.0 Flash',
+  'gemini-2.5-flash': '2.5 Flash',
+  'gemini-2.5-flash-lite': '2.5 Flash Lite',
+  'gemini-2.5-pro': '2.5 Pro',
+  'gemini-3-flash-preview': '3 Flash',
+  'gemini-3-pro-preview': '3 Pro',
+}
+
 export default function GeminiCard({
   account,
   onDownload,
@@ -15,7 +24,8 @@ export default function GeminiCard({
 }) {
   const isError = account.status === 'error'
   const providerLabel = PROVIDER_LABELS[account.provider] || account.provider
-  const hasQuota = account.quota?.pro != null
+  const models = account.quota?.models ?? []
+  const hasQuota = models.length > 0
 
   return (
     <div
@@ -61,12 +71,15 @@ export default function GeminiCard({
       </div>
 
       {hasQuota && (
-        <div className="max-w-[120px] mx-auto">
-          <UsageGauge
-            label="Pro"
-            value={account.quota!.pro!.used}
-            resetText={formatResetTime(account.quota!.pro!.resetTime)}
-          />
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+          {models.map((m) => (
+            <UsageGauge
+              key={m.modelId}
+              label={MODEL_LABELS[m.modelId] || m.modelId.replace('gemini-', '')}
+              value={m.used}
+              resetText={formatResetTime(m.resetTime)}
+            />
+          ))}
         </div>
       )}
     </div>

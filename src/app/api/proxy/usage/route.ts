@@ -160,6 +160,7 @@ export async function GET() {
     const geminiEntries: AuthFileEntry[] = []
 
     const HIDDEN_EMAILS = new Set(['hadaneywoo@gmail.com'])
+    const HIDDEN_GEMINI_EMAILS = new Set(['devswha@gmail.com'])
 
     for (const entry of files) {
       if (entry.disabled) continue
@@ -170,7 +171,9 @@ export async function GET() {
       } else if (provider === 'codex') {
         codexEntries.push(entry)
       } else if (provider === 'gemini-cli') {
-        geminiEntries.push(entry)
+        if (!HIDDEN_GEMINI_EMAILS.has(entry.email || entry.name)) {
+          geminiEntries.push(entry)
+        }
       }
     }
 
@@ -220,7 +223,13 @@ export async function GET() {
 
     const gemini: GeminiUsage[] = geminiEntries.map((entry, i) => {
       const buckets = geminiResults[i]
-      const proBucket = buckets?.find((b) => b.modelId.includes('pro') && !b.modelId.includes('vertex'))
+      const models = buckets
+        ?.filter((b) => !b.modelId.includes('_vertex'))
+        .map((b) => ({
+          modelId: b.modelId,
+          used: Math.round((1 - b.remainingFraction) * 100),
+          resetTime: b.resetTime,
+        })) ?? []
       return {
         email: entry.email || entry.name,
         provider: entry.provider || entry.type,
@@ -228,12 +237,7 @@ export async function GET() {
         label: entry.label,
         status: (entry.unavailable || entry.status === 'disabled') ? 'error' as const : 'active' as const,
         statusMessage: entry.status_message || undefined,
-        quota: buckets ? {
-          pro: proBucket ? {
-            used: Math.round((1 - proBucket.remainingFraction) * 100),
-            resetTime: proBucket.resetTime,
-          } : null,
-        } : undefined,
+        quota: buckets ? { models } : undefined,
       }
     })
 

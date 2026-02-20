@@ -60,6 +60,12 @@ export interface GeminiQuotaBucket {
   resetTime: string
 }
 
+export interface GeminiModelQuota {
+  modelId: string
+  used: number
+  resetTime: string
+}
+
 export interface GeminiUsage {
   email: string
   provider: string
@@ -68,7 +74,7 @@ export interface GeminiUsage {
   status: 'active' | 'error'
   statusMessage?: string
   quota?: {
-    pro: { used: number; resetTime: string } | null
+    models: GeminiModelQuota[]
   }
 }
 
